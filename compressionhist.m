@@ -19,3 +19,4 @@ u=dct2(e1);
 v=dct2(e2);
 edges=[-10 -2:0.25:2 10];
 hist(u,edges);
+hist(v,edges);
