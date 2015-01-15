@@ -10,3 +10,17 @@ quant = [16  11  10  16  24   40   51   61
         24  35  55  64  81   104  113  92
         49  64  78  87  103  121  120  101
         72  92  95  98  112  100  103  99];
+quantizedimg= blockproc(b, [8 8], @(block_struct) round(block_struct.data ./ quant) .*quant);
+mask = [1 1 1 1 0 0 0 0
+        1 1 1 0 0 0 0 0
+        1 1 0 0 0 0 0 0
+        1 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0];
+b2 = blockproc(quantizedimg,[8 8],@(block_struct) mask .* block_struct.data);
+e2 = blockproc(b2,[8 8], @(block_struct) (t' * block_struct.data * t) ./ repmat(100,8,8));
+histvalue = blockproc(quantizedimg,[8 8], @(block_struct) block_struct.data(1,2));
+[x, y] = hist(reshape(histvalue,1,prod(size(histvalue))), 300);
+plot(y,x)
