@@ -1,22 +1,12 @@
-e = imread('ucid00002.tif');
-e1 = rgb2gray(e);
-e1 = im2double(e1);
+i = imread('ucid01321.tif');
+e1 = im2double(rgb2gray(i));
 t = dctmtx(8);
-dct = @(block_struct) t * block_struct.data * t';
-b = blockproc(e1,[8 8],dct);
-mask = [1 1 1 1 0 0 0 0
-1 1 1 0 0 0 0 0
-1 1 0 0 0 0 0 0
-1 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0];
-b2 = blockproc(b,[8 8],@(block_struct) mask .* block_struct.data);
-invdct = @(block_struct) t' * block_struct.data * t;
-e2 = blockproc(b2,[8 8],invdct);
-u=dct2(e1);
-v=dct2(e2);
-edges=[-10 -2:0.25:2 10];
-hist(u,edges);
-hist(v,edges);
+b = blockproc(e1,[8 8], @(block_struct) (t * block_struct.data * t') .* repmat(100,8,8));
+quant = [16  11  10  16  24   40   51   61
+        12  12  14  19  26   58   60   55
+        14  13  16  24  40   57   69   56
+        14  17  22  29  51   87   80   62
+        18  22  37  56  68   109  103  77
+        24  35  55  64  81   104  113  92
+        49  64  78  87  103  121  120  101
+        72  92  95  98  112  100  103  99];
