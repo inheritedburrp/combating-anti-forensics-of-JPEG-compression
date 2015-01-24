@@ -2,6 +2,7 @@ i = imread('ucid01321.tif');
 e1 = im2double(rgb2gray(i));
 t = dctmtx(8);
 b = blockproc(e1,[8 8], @(block_struct) (t * block_struct.data * t') .* repmat(100,8,8));
+c = blockproc(e1,[8 8],@(block_struct) t * block_struct.data * t';
 quant = [16  11  10  16  24   40   51   61
         12  12  14  19  26   58   60   55
         14  13  16  24  40   57   69   56
