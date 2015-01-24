@@ -24,3 +24,7 @@ e2 = blockproc(b2,[8 8], @(block_struct) (t' * block_struct.data * t) ./ repmat(
 histvalue = blockproc(quantizedimg,[8 8], @(block_struct) block_struct.data(1,2));
 [x, y] = hist(reshape(histvalue,1,prod(size(histvalue))), 300);
 plot(y,x)
+
+decval=blockproc(c,[8 8], @(block_struct) round(10 * block_struct.data(1,2)) / 10);
+sn= blockproc(c,[8 8], @(block_struct) block_struct.data(1,2) ./ abs(block_struct.data(1,2)));
+d= sn .* (decval - round(decval));
