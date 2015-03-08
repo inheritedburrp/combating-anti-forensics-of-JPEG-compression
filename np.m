@@ -39,3 +39,52 @@ c11= blockproc(c1, [8 8], @(block_struct) block_struct.data(1,2));
 c12= reshape(c11, 1, numel(c11));
     l =  blockproc(b2,[8 8], @(block_struct) block_struct.data(1,2));
     m = abs(l);
+n = sum(sum(m));
+o = 2 * nnz(l) * 14 + 4 * n;
+r = 2 * nnz(l) * 14 - 4 * n;
+n0 = prod(size(l)) - nnz(l);
+s = (n0)^2 * 14^2;
+u = sqrt(s - (r * o));
+v = log((-(n0) * 14 + u) / (2 * prod(size(l)) * 14 + 4 * n));
+lam = (-2 / 14) * v;
+c0=1-exp((-lam*14)/2);
+cl=1/(lam) * (1- exp(-lam*14));
+ll=reshape(m,1, prod(size(l)));
+k=1;
+w=[];
+
+for x = ll
+    if x == 0
+        if -7 <= c12(1,k) < 7
+            zz=1/(c0) * exp(-lam*c12(1,k));
+            w=[w zz];
+        else
+            w=[w 0];
+        end
+    elseif x ~= 0
+        if -7 <= c12(1,k) < 7
+            x1= x / abs(x);
+            zz = 1/(cl) * exp(-x1 * lam * (c12(1,k) + 7));
+            w=[w zz];
+        else
+            w=[w 0];
+        end
+    end
+    k=k+1;
+end
+w=reshape(w,64,48);
+
+
+Q=medfilt2(J);
+R=imnoise(J, 'gaussian',0,0.01);
+S=Q+R;
+H=1/9.* [1 1 1;1 1 1;1 1 1];
+one=1;
+H_filt= filter(one, [one -1], H);
+convoluted_image=conv2(S, H_filt);
+convoluted_image([514 513],:)=[];
+convoluted_image(:,[385 386])=[];
+f=S-convoluted_image;
+f1= hist(f) / max(max(hist(f)));
+K=medfilt2(convoluted_image);
+imshow(K);
